@@ -1,9 +1,12 @@
 import flask 
 import os
 from flask import request, jsonify, json
+from flask_cors import CORS
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = False
+
+CORS(app)
 
 pprplayers = open("ppr.json", "r")
 halfpprplayers = open("halfppr.json", "r")
