@@ -13,7 +13,7 @@ def home():
 
 
 @app.route('/api/ppr', methods=['GET'])
-def api_all():
+def api_ppr():
     return json.dumps(pprdata)
 
 app.run()
