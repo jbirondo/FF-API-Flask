@@ -16,16 +16,15 @@ standarddata = json.loads(standardplayers.read())
 def home():
     return "<h1>VOR Fantasy Football API</h1>"
 
-
-@app.route('/api/ppr', methods=['GET'])
+@app.route('/ppr', methods=['GET'])
 def api_ppr():
     return json.dumps(pprdata)
 
-@app.route('/api/standard', methods=['GET'])
+@app.route('/standard', methods=['GET'])
 def api_standard():
     return json.dumps(standarddata)
 
-@app.route('/api/halfppr', methods=['GET'])
+@app.route('/halfppr', methods=['GET'])
 def api_halfppr():
     return json.dumps(halfpprdata)
 
