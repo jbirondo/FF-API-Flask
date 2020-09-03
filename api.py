@@ -23,17 +23,19 @@ def home():
 
 @app.route('/ppr', methods=['GET'])
 def api_ppr():
-    return json.dumps(pprdata, indent=4, separators=(",", ": "))
+    os.system("../virtual/bin/python vor.py")
+    return '{ "format": "ppr", "rankings": ' + json.dumps(pprdata, indent=4, separators=(",", ": ")) + "}"
 
 @app.route('/standard', methods=['GET'])
 def api_standard():
-    return json.dumps(standarddata, indent=4, separators=(",", ": "))
+    os.system("../virtual/bin/python vor.py")
+    return '{ "format": "standard", "rankings": ' + json.dumps(standarddata, indent=4, separators=(",", ": ")) +"}"
 
 @app.route('/halfppr', methods=['GET'])
 def api_halfppr():
-    return json.dumps(halfpprdata, indent=4, separators=(",", ": "))
+    os.system("../virtual/bin/python vor.py")
+    return '{ "format": "standard", "rankings": ' + json.dumps(halfpprdata, indent=4, separators=(",", ": ")) + "}"
 
 if __name__ == '__main__':
-    # Bind to PORT if defined, otherwise default to 5000.
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
