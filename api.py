@@ -1,4 +1,5 @@
 import os
+import datetime
 import flask
 import flask_cors
 from flask import request, jsonify, json
@@ -24,17 +25,17 @@ def home():
 @app.route('/ppr', methods=['GET'])
 def api_ppr():
     os.system("../virtual/bin/python vor.py")
-    return '{ "format": "ppr", "rankings": ' + json.dumps(pprdata, indent=4, separators=(",", ": ")) + "}"
+    return '{ "format": "ppr", "rankings": ' + json.dumps(pprdata, indent=4, separators=(",", ": ")) + ", 'Time Updated: " + '{:%Y-%b-%d %H:%M:%S}'.format(datetime.datetime.now()) + "}" 
 
 @app.route('/standard', methods=['GET'])
 def api_standard():
     os.system("../virtual/bin/python vor.py")
-    return '{ "format": "standard", "rankings": ' + json.dumps(standarddata, indent=4, separators=(",", ": ")) +"}"
+    return '{ "format": "standard", "rankings": ' + json.dumps(standarddata, indent=4, separators=(",", ": ")) + ", 'Time Updated: " + '{:%Y-%b-%d %H:%M:%S}'.format(datetime.datetime.now()) + "}"
 
 @app.route('/halfppr', methods=['GET'])
 def api_halfppr():
     os.system("../virtual/bin/python vor.py")
-    return '{ "format": "standard", "rankings": ' + json.dumps(halfpprdata, indent=4, separators=(",", ": ")) + "}"
+    return '{ "format": "standard", "rankings": ' + json.dumps(halfpprdata, indent=4, separators=(",", ": ")) + ", 'Time Updated: " + '{:%Y-%b-%d %H:%M:%S}'.format(datetime.datetime.now()) + "}"
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
