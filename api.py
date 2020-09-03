@@ -7,7 +7,8 @@ from flask_cors import CORS
 app = flask.Flask(__name__)
 app.config["DEBUG"] = False
 
-CORS(app)
+CORS(app, resources={
+     r'/*': {'origins': config['ORIGINS']}}, supports_credentials=True)
 
 pprplayers = open("ppr.json", "r")
 halfpprplayers = open("halfppr.json", "r")
