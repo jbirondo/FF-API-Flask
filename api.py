@@ -4,9 +4,9 @@ from flask import request, jsonify, json
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
-pprplayers = open("ppr.json", "r")
-halfpprplayers = open("halfppr.json", "r")
-standardplayers = open("standard.json", "r")
+pprplayers = open("api/ppr.json", "r")
+halfpprplayers = open("api/halfppr.json", "r")
+standardplayers = open("api/standard.json", "r")
 
 pprdata = json.loads(pprplayers.read())
 halfpprdata = json.loads(halfpprplayers.read())
