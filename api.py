@@ -28,4 +28,4 @@ def api_standard():
 def api_halfppr():
     return json.dumps(halfpprdata)
 
-app.run()
+app.run(host='0.0.0.0')
