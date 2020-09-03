@@ -5,14 +5,14 @@ app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 pprplayers = open("ppr.json", "r")
-pprdata = json.loads(players.read())
+pprdata = json.loads(pprplayers.read())
 
 @app.route('/', methods=['GET'])
 def home():
     return "<h1>VOR Fantasy Football API</h1>"
 
 
-@app.route('/api/all', methods=['GET'])
+@app.route('/api/ppr', methods=['GET'])
 def api_all():
     return json.dumps(pprdata)
 
