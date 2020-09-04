@@ -21,7 +21,7 @@ standarddata = json.loads(standardplayers.read())
 ppr_json = '{ "format": "ppr", "rankings": ' + json.dumps(pprdata, indent=4, separators=(
     ",", ": ")) + "}"
 
-halfppr_json = '{ "format": "standard", "rankings": ' + json.dumps(halfpprdata, indent=4, separators=(
+halfppr_json = '{ "format": "halfppr", "rankings": ' + json.dumps(halfpprdata, indent=4, separators=(
     ",", ": ")) + "}"
 
 standard_json = '{ "format": "standard", "rankings": ' + json.dumps(standarddata, indent=4, separators=(
