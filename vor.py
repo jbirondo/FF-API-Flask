@@ -125,6 +125,7 @@ for format in ["standard", "halfppr", "ppr"]:
     json = final_df[:].to_json(orient="records")
 
     f = open("{name}".format(name=format) + ".json", "w")
+    print ("Writing {}...".format(format))
     f.write(json)
     f.close()
 
