@@ -43,6 +43,7 @@ def api_halfppr():
 @app.route('/standard', methods=['GET'])
 def api_standard():
     return standard_json
+    
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
