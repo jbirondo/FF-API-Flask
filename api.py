@@ -10,9 +10,9 @@ app.config["DEBUG"] = False
 
 CORS(app, supports_credentials=True)
 
-pprplayers = open("ppr.json", "r")
-halfpprplayers = open("halfppr.json", "r")
-standardplayers = open("standard.json", "r")
+pprplayers = open("2021_ppr.json", "r")
+halfpprplayers = open("2021_halfppr.json", "r")
+standardplayers = open("2021_standard.json", "r")
 
 pprdata = json.loads(pprplayers.read())
 halfpprdata = json.loads(halfpprplayers.read())
