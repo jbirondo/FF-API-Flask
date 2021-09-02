@@ -5,14 +5,30 @@ import pandas as pd
 from bs4 import BeautifulSoup as BS
 import requests
 
-# for format in ["standard", "halfppr", "ppr"]:
-for format in ["standard"]:
+ADP_URL = 'https://www.fantasypros.com/nfl/adp/ppr-overall.php'
 
-    # df = pd.read_csv('https://raw.githubusercontent.com/fantasydatapros/data/master/fantasypros/fp_projections.csv')
+
+res = requests.get(ADP_URL)
+soup = BS(res.content, 'html.parser')
+table = soup.find('table', {'id': 'data'})
+
+adp_df = pd.read_html(str(table))[0]
+
+adp_df['Team'] = adp_df['Player Team (Bye)'].apply(lambda x: x.split()[-2])
+adp_df['Player'] = adp_df['Player Team (Bye)'].apply(lambda x: ' '.join(x.split()[:-2]))
+
+adp_df['Player'] = adp_df['Player'].apply(lambda x: ' '.join(x.split()[:2]))
+
+adp_df['POS'] = adp_df['POS'].apply(lambda x: x[:2])
+adp_df = adp_df.loc[:, ['Player', 'Team', 'POS', 'AVG']]
+
+adp_df['ADP_RANK'] = adp_df['AVG'].rank(method='first')
+
+
+
+for format in ["standard", "halfppr", "ppr"]:
+
     df = pd.read_csv('https://raw.githubusercontent.com/fantasydatapros/2021-VOR-Model/master/data/all_compiled.csv', thousands=',')
-    adp_df = pd.read_csv('https://raw.githubusercontent.com/fantasydatapros/data/master/fantasypros/adp/PPR_ADP.csv', index_col=0)
-
-    ADP_URL = 'https://www.fantasypros.com/nfl/adp/ppr-overall.php'
 
     df = df.iloc[:, 1:]
 
@@ -26,7 +42,6 @@ for format in ["standard"]:
         'passing_td': 6,
         'int': -2
     }
-    # print(float("".join(df.iloc[2]["RUSH_YD"].split(","))) + 1000)
 
     if format == "standard":
         scoring_weights["receptions"] = 0.0
@@ -34,28 +49,7 @@ for format in ["standard"]:
         scoring_weights["receptions"] = 0.5
     else:
         scoring_weights["receptions"] = 1.0
-
-    # df['REC'] = df['REC'].str.replace(',', '').astype(float)
-    # df['REC_YD'] = df['REC_YD'].str.replace(',', '').astype(float)
-    # df['REC_TD'] = df['REC_TD'].str.replace(',', '').astype(float)
-    # df['FL'] = df['FL'].str.replace(',', '').astype(float)
-    # df['RUSH_YD'] = df['RUSH_YD'].str.replace(',', '').astype(float)
-    # df['RUSH_TD'] = df['RUSH_TD'].str.replace(',', '').astype(float)
-    # df['PASS_YD'] = df['PASS_YD'].str.replace(',', '').astype(float)
-    # df['PASS_TD'] = df['PASS_TD'].str.replace(',', '').astype(float)
-    # df['INTS'] = df['INTS'].str.replace(',', '').astype(float)
-
-    # df['FantasyPoints'] = (
-    #     df['Receptions']*scoring_weights['receptions'] + \
-    #     df['ReceivingYds']*scoring_weights['receiving_yds'] + \
-    #     df['ReceivingTD']*scoring_weights['receiving_td'] + \
-    #     df['FL']*scoring_weights['FL'] + \
-    #     df['RushingYds']*scoring_weights['rushing_yds'] + \
-    #     df['RushingTD']*scoring_weights['rushing_td'] + \
-    #     df['PassingYds']*scoring_weights['passing_yds'] + \
-    #     df['PassingTD']*scoring_weights['passing_td'] + \
-    #     df['Int']*scoring_weights['int'] 
-    #     )    
+   
     df['FantasyPoints'] = (
         df['REC']*scoring_weights['receptions'] + \
         df['REC_YD']*scoring_weights['receiving_yds'] + \
@@ -68,9 +62,8 @@ for format in ["standard"]:
         df['INTS']*scoring_weights['int'] 
         )
 
-    # print(df[100:130])
 
-    adp_df['ADP RANK'] = adp_df['AVG'].rank()
+    # adp_df['ADP RANK'] = adp_df['AVG'].rank()
 
     adp_df_cutoff = adp_df[:100]
 
@@ -84,12 +77,12 @@ for format in ["standard"]:
     for _, row in adp_df_cutoff.iterrows():
         
         position = row['POS']
-        player = row['PLAYER']
+        player = row['Player']
         
         if position in replacement_players:
             replacement_players[position] = player 
 
-    df = df[['Player', 'POS', 'Team', 'FantasyPoints']]
+    df = df[['Player', 'POS', 'FantasyPoints']]
 
 
     replacement_values = {} 
@@ -122,31 +115,9 @@ for format in ["standard"]:
         'VOR Rank': 'Value Rank'
     }, axis=1) 
 
-    res = requests.get(ADP_URL)
-    soup = BS(res.content, 'html.parser')
-    table = soup.find('table', {'id': 'data'})
-
-    adp_df = pd.read_html(str(table))[0]
-    #cleaning the data.
-    #player name, team, and bye week were all located in the same column, and so we are splitting the column up and creating seperate columns
-    #for player name and team and removing bye week altogether
-    adp_df['Team'] = adp_df['Player Team (Bye)'].apply(lambda x: x.split()[-2])
-    adp_df['Player'] = adp_df['Player Team (Bye)'].apply(lambda x: ' '.join(x.split()[:-2]))
-    # removing extra characters in player names to prepare data for merging
-    adp_df['Player'] = adp_df['Player'].apply(lambda x: ' '.join(x.split()[:2]))
-
-    adp_df['POS'] = adp_df['POS'].apply(lambda x: x[:2])
-    adp_df = adp_df.loc[:, ['Player', 'Team', 'POS', 'AVG']]
-
-    #creating a column to rank players on their ADP
-    adp_df['ADP_RANK'] = adp_df['AVG'].rank(method='first')
-
-
     adp_df = adp_df.rename({
-        'PLAYER': 'Player',
-        # 'POS': 'Pos',
         'AVG': 'Average ADP',
-        'ADP RANK': 'ADP Rank'
+        'ADP_RANK': 'ADP Rank'
     }, axis=1) 
 
     final_df = df.merge(adp_df, how='left', on=['Player', 'POS'])
@@ -173,12 +144,11 @@ for format in ["standard"]:
 
     json = final_df[:].to_json(orient="records")
 
-    # f = open("2021_{name}".format(name=format) + ".json", "w")
-    # print ("Writing {}...".format(format))
-    # f.write(json)
-    # f.close()
+    f = open("2021_{name}".format(name=format) + ".json", "w")
+    print ("Writing {}...".format(format))
+    f.write(json)
+    f.close()
 
-    # print(df[:100])
 
 
 
