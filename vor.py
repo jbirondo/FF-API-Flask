@@ -121,6 +121,9 @@ for format in ["standard", "halfppr", "ppr"]:
     }, axis=1) 
 
     final_df = df.merge(adp_df, how='left', on=['Player', 'POS'])
+    final_df = final_df.rename({
+        'POS': 'Pos'
+    })
     final_df['Diff in ADP and Value'] = final_df['ADP Rank'] - final_df['Value Rank']
 
     draft_pool = final_df.sort_values(by='ADP Rank')[:196]
